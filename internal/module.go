@@ -32,13 +32,32 @@ func FetchActivity(username string) ([]string, error) {
 func createOutput(data []activity) []string {
 	result := []string{}
 
-	hashMap := map[string]int{}
+	// keys := make([]activity, 0, len(data))
+
+	// hashMap := map[activity]int{}
 	for _, act := range data {
-		hashMap[fmt.Sprintf("%s - %s", act.Type, act.Repo.Name)] ++
-		// result = append(result, fmt.Sprintf("%s - %s\n", act.Type, act.Repo.Name))
+		result = append(result, fmt.Sprintf(getEvent(act.Type), act.Repo.Name))
 	}
 
-	fmt.Println(hashMap)
+	// slices.SortFunc(keys, func(a, b activity) int {
+	// 	return b.CreatedAt.Compare(a.CreatedAt)
+	// })
 
+	// fmt.Println(keys)
 	return result
+}
+
+func getEvent(eventName string) string {
+	switch eventName {
+	case "WatchEvent":
+		return "⭐ Starred %s"
+	case "PushEvent":
+		return "Pushed commit to %s"
+	case "PullRequestEvent":
+		return "Opened a pull request in %s"
+	case "CreateEvent":
+		return "Created a %s repository."
+	default:
+		return "Not found"
+	}
 }

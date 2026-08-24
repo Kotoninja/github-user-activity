@@ -32,7 +32,13 @@ to quickly create a Cobra application.`,
 			return
 		}
 
-		fmt.Println(output)
+		if len(output) == 0 {
+			fmt.Println("No recent activity")
+			return
+		}
+		for _, str := range output {
+			fmt.Println(str)
+		}
 	},
 }
 
