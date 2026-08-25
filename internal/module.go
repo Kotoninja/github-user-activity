@@ -33,8 +33,8 @@ func createOutput(data []activity) []string {
 	result := []string{}
 
 	var activityCounter int = 1
-	for i := 0; i < len(data)-1; i++ {
-		if data[i] == data[i+1] {
+	for i := 0; i < len(data); i++ {
+		if i < len(data)-1 && data[i] == data[i+1] {
 			activityCounter++
 			continue
 		}
@@ -53,8 +53,7 @@ func createOutput(data []activity) []string {
 		}
 		activityCounter = 1
 	}
-
-	//TODO handle last item
+	
 	return result
 }
 
