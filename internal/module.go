@@ -32,18 +32,29 @@ func FetchActivity(username string) ([]string, error) {
 func createOutput(data []activity) []string {
 	result := []string{}
 
-	// keys := make([]activity, 0, len(data))
+	var activityCounter int = 1
+	for i := 0; i < len(data)-1; i++ {
+		if data[i] == data[i+1] {
+			activityCounter++
+			continue
+		}
 
-	// hashMap := map[activity]int{}
-	for _, act := range data {
-		result = append(result, fmt.Sprintf(getEvent(act.Type), act.Repo.Name))
+		repoName := data[i].Repo.Name
+		ref := data[i].Payload.Ref
+		refType := data[i].Payload.RefType
+
+		switch data[i].Type {
+		case "PushEvent":
+			result = append(result, fmt.Sprintf(getEvent(data[i].Type), activityCounter, repoName))
+		case "CreateEvent":
+			result = append(result, fmt.Sprintf(getEvent(data[i].Type), refType, ref, repoName))
+		default:
+			result = append(result, fmt.Sprintf(getEvent(data[i].Type), repoName))
+		}
+		activityCounter = 1
 	}
 
-	// slices.SortFunc(keys, func(a, b activity) int {
-	// 	return b.CreatedAt.Compare(a.CreatedAt)
-	// })
-
-	// fmt.Println(keys)
+	//TODO handle last item
 	return result
 }
 
@@ -52,11 +63,11 @@ func getEvent(eventName string) string {
 	case "WatchEvent":
 		return "⭐ Starred %s"
 	case "PushEvent":
-		return "Pushed commit to %s"
+		return "Pushed %d commit(s) to %s"
 	case "PullRequestEvent":
 		return "Opened a pull request in %s"
 	case "CreateEvent":
-		return "Created a %s repository."
+		return "Created %s %s in %s"
 	default:
 		return "Not found"
 	}
