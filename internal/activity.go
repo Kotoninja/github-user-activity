@@ -1,13 +1,13 @@
 package internal
 
-import (
-	"time"
-)
-
 type activity struct {
 	Type string `json:"type"`
 	Repo struct {
 		Name string `json:"name"`
 	} `json:"repo"`
-	CreatedAt time.Time `json:"created_at"`
+	Payload struct {
+		Action  string `json:"action"`
+		Ref     string `json:"ref"`
+		RefType string `json:"ref_type"`
+	} `json:"payload"`
 }
