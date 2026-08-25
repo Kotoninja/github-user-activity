@@ -11,13 +11,21 @@ import (
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "github-user-activity <username>",
-	Short: "A brief description of your application",
-	Long: `A longer description that spans multiple lines and likely contains
-examples and usage of using your application. For example:
+	Short: "simple command line interface (CLI) to fetch the recent activity of a GitHub user and display it in the terminal. ",
+	Long: `Provide the GitHub username as an argument when running the CLI.
 
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+github-activity <username>
+Fetch the recent activity of the specified GitHub user using the GitHub API. You can use the following endpoint to fetch the user's activity:
+
+# https://api.github.com/users/<username>/events
+# Example: https://api.github.com/users/kamranahmedse/events
+Display the fetched activity in the terminal.
+
+Output:
+- Pushed 3 commits to kamranahmedse/developer-roadmap
+- Opened a new issue in kamranahmedse/developer-roadmap
+- Starred kamranahmedse/developer-roadmap
+- ...`,
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
 	Run: func(cmd *cobra.Command, args []string) {
@@ -32,7 +40,13 @@ to quickly create a Cobra application.`,
 			return
 		}
 
-		fmt.Println(output)
+		if len(output) == 0 {
+			fmt.Println("No recent activity")
+			return
+		}
+		for _, str := range output {
+			fmt.Println(str)
+		}
 	},
 }
 

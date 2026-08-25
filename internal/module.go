@@ -32,13 +32,42 @@ func FetchActivity(username string) ([]string, error) {
 func createOutput(data []activity) []string {
 	result := []string{}
 
-	hashMap := map[string]int{}
-	for _, act := range data {
-		hashMap[fmt.Sprintf("%s - %s", act.Type, act.Repo.Name)] ++
-		// result = append(result, fmt.Sprintf("%s - %s\n", act.Type, act.Repo.Name))
+	var activityCounter int = 1
+	for i := 0; i < len(data); i++ {
+		if i < len(data)-1 && data[i] == data[i+1] {
+			activityCounter++
+			continue
+		}
+
+		repoName := data[i].Repo.Name
+		ref := data[i].Payload.Ref
+		refType := data[i].Payload.RefType
+
+		switch data[i].Type {
+		case "PushEvent":
+			result = append(result, fmt.Sprintf(getEvent(data[i].Type), activityCounter, repoName))
+		case "CreateEvent":
+			result = append(result, fmt.Sprintf(getEvent(data[i].Type), refType, ref, repoName))
+		default:
+			result = append(result, fmt.Sprintf(getEvent(data[i].Type), repoName))
+		}
+		activityCounter = 1
 	}
-
-	fmt.Println(hashMap)
-
+	
 	return result
+}
+
+func getEvent(eventName string) string {
+	switch eventName {
+	case "WatchEvent":
+		return "⭐ Starred %s"
+	case "PushEvent":
+		return "Pushed %d commit(s) to %s"
+	case "PullRequestEvent":
+		return "Opened a pull request in %s"
+	case "CreateEvent":
+		return "Created %s %s in %s"
+	default:
+		return "Not found"
+	}
 }
